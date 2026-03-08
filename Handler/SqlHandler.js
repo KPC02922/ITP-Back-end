@@ -1,0 +1,94 @@
+const dotenv = require('dotenv')
+dotenv.config()
+const mysql = require('mysql2')
+const Handler = require('./CommonHandler')
+const ErrorCodeHandler = require('./ErrorCodeHandler')
+const errorCodeHandler = new ErrorCodeHandler()
+
+module.exports = class SqlHandler extends Handler{
+    constructor(){
+        super()
+    }
+
+    async goSql(sql, sqlParam) {
+        try {
+            const db = mysql.createPool({ host: process.env.DBHOST, user: process.env.DBUSER, password: process.env.DBPW, database: process.env.DB}).promise()
+            console.log(`connect db`)
+            console.log(`sql: ${sql}\nsqlParam: ${sqlParam}`)
+            const result = await db.query(sql, sqlParam)
+            return result[0]
+        } catch (error) {
+            const [error_code, error_message] = errorCodeHandler.goSql_error()
+            throw new Error(super.genErrorMessage(error_code, error_message))
+        }
+    }
+
+    async genPostSql(table, reqBody) {
+        try {
+            console.log(`genPostSql, table: ${table}, reqBody: ${JSON.stringify(reqBody)}`)
+
+            const column = await this.getColumn(table, true)
+            const sql = `INSERT INTO ${table} (${column.join(',')}) VALUES (${column.map(() => '?').join(',')})`
+            let sqlParam = []
+            for (let i = 0; i < column.length; i++) {
+                const targetColumn = column[i].toString()
+                if (targetColumn != "status") {
+                    if (!reqBody[targetColumn]) {
+                        throw new Error(super.genErrorMessage(601, 'Request body is empty'))
+                    }
+                    sqlParam.push(reqBody[targetColumn])
+                }
+                else {
+                    sqlParam.push("N")
+                }
+            }
+
+            console.log(`sql: ${sql}`)
+            console.log(`sqlParam: ${sqlParam}`)
+
+            return { sql, sqlParam }
+        } catch (error) {
+            throw error.message
+        }
+        
+    }
+
+    async genPutSql(table, req) {
+        try {
+            const id = req.params.id
+            if (!id) {
+                throw new Error(super.genErrorMessage(601, 'Request body is empty'))
+            }
+            console.log(`genPutSql, table: ${table}, req.body: ${JSON.stringify(req.body)}`)
+            const sql = `UPDATE ${table} SET ${Object.keys(req.body).map(key => `${key} = ?`).join(', ')} WHERE id = ?`
+            const sqlParam = [...Object.keys(req.body).map(key => req.body[key]), id]
+
+            console.log(`sql: ${sql}`)
+            console.log(`sqlParam: ${sqlParam}`)
+            return { sql, sqlParam }
+        } catch (error) {
+            throw new Error(super.genErrorMessage(601, 'Request body is empty'))
+        }
+    }
+
+    async getColumn(table, filter){
+        try {
+            const db = mysql.createPool({ host: process.env.DBHOST, user: process.env.DBUSER, password: process.env.DBPW, database: process.env.DB}).promise()
+            const result = await db.query(`SELECT * FROM ${table} LIMIT 1`, [])
+            const record = result[0][0]
+            const key = Object.keys(record)
+            let column = key
+
+            if (filter) {
+                column = key.filter(item => item !== `id` && item !== `lastUpdateTime`)
+            }
+
+            console.log(`getColumn, table: ${table}, column: ${column}`)
+
+            return column
+        } catch (error) {
+            throw super.genErrorMessage(600, 'Database query error')
+        }
+    }
+
+}
