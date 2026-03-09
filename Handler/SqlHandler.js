@@ -28,13 +28,15 @@ module.exports = class SqlHandler extends Handler{
             console.log(`genPostSql, table: ${table}, reqBody: ${JSON.stringify(reqBody)}`)
 
             const column = await this.getColumn(table, true)
+            console.log(`genPostSql, column: ${column}`)
             const sql = `INSERT INTO ${table} (${column.join(',')}) VALUES (${column.map(() => '?').join(',')})`
+            console.log(`genPostSql, sql: ${sql}`)
             let sqlParam = []
             for (let i = 0; i < column.length; i++) {
                 const targetColumn = column[i].toString()
                 if (targetColumn != "status") {
                     if (!reqBody[targetColumn]) {
-                        throw new Error(super.genErrorMessage(601, 'Request body is empty'))
+                        throw new Error(super.genErrorMessage(601, `Request body is empty | Missing column: ${targetColumn}`))
                     }
                     sqlParam.push(reqBody[targetColumn])
                 }
@@ -80,7 +82,8 @@ module.exports = class SqlHandler extends Handler{
             let column = key
 
             if (filter) {
-                column = key.filter(item => item !== `id` && item !== `lastUpdateTime`)
+                column = key.filter(item => item !== `id` && item !== `lastUpdateTime` && item !== `postTime` && item !== `updateTime`)
+                
             }
 
             console.log(`getColumn, table: ${table}, column: ${column}`)

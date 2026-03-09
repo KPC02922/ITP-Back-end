@@ -19,18 +19,15 @@ app.listen(port, () => {
 
 const reportFlooding = require('./Report/flooding')
 const reportRainfall = require('./Report/rainfall')
-const reportUmbrellaRental = require('./Report/umbrellaRental')
+const reportOther = require('./Report/other')
 const umbrellaRentalJc = require('./UmbrellaRental/hkJockeyClub')
 const umbrellaRentalSf = require('./UmbrellaRental/sfExpress')
-const umbrellaRentalOther = require('./UmbrellaRental/other')
 
 app.use('/report/flooding', reportFlooding)
 app.use('/report/rainfall', reportRainfall)
-app.use('/report/umbrellaRental', reportUmbrellaRental)
+app.use('/report/other', reportOther)
 app.use('/umbrellaRental/hkJockeyClub', umbrellaRentalJc)
 app.use('/umbrellaRental/sfExpress', umbrellaRentalSf)
-app.use('/umbrellaRental/other', umbrellaRentalOther)
-
 
 // handle undefined path
 app.use((req, res) => {

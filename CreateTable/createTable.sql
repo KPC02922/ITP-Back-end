@@ -1,12 +1,12 @@
 CREATE TABLE `umbrella_rental_sf_express` (
       `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      `regionCode` VARCHAR(10) NOT NULL,
-      `districtCode` VARCHAR(10) NOT NULL,
-      `code` VARCHAR(10) NOT NULL,
+      `regionCode` VARCHAR(25) NOT NULL,
+      `districtCode` VARCHAR(25) NOT NULL,
+      `code` VARCHAR(25) NOT NULL,
       `location` VARCHAR(100),
-      `weekDayOfficeHours` VARCHAR(10) NOT NULL,
-      `satOfficeHours` VARCHAR(10) NOT NULL,
-      `sunHolidayOfficeHours` VARCHAR(10) NOT NULL,
+      `weekDayOfficeHours` VARCHAR(25) NOT NULL,
+      `satOfficeHours` VARCHAR(25) NOT NULL,
+      `sunHolidayOfficeHours` VARCHAR(25) NOT NULL,
       `latitude` double NOT NULL,
       `longitude` double NOT NULL,
       `status` VARCHAR(1) NOT NULL,
@@ -15,8 +15,8 @@ CREATE TABLE `umbrella_rental_sf_express` (
 
 CREATE TABLE `umbrella_rental_hk_jockey_club` (
       `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      `regionCode` VARCHAR(10) NOT NULL,
-      `districtCode` VARCHAR(10) NOT NULL,
+      `regionCode` VARCHAR(25) NOT NULL,
+      `districtCode` VARCHAR(25) NOT NULL,
       `location` VARCHAR(100),
       `officeHours` VARCHAR(255) NOT NULL,
       `latitude` double NOT NULL,
@@ -27,11 +27,11 @@ CREATE TABLE `umbrella_rental_hk_jockey_club` (
 
 CREATE TABLE `umbrella_rental_other` (
       `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      `regionCode` VARCHAR(10) NOT NULL,
-      `districtCode` VARCHAR(10) NOT NULL,
-      `address` VARCHAR(10) NOT NULL,
-      `storeName` VARCHAR(10) NOT NULL,
-      `officeHours` VARCHAR(10) NOT NULL,
+      `regionCode` VARCHAR(25) NOT NULL,
+      `districtCode` VARCHAR(25) NOT NULL,
+      `address` VARCHAR(25) NOT NULL,
+      `storeName` VARCHAR(25) NOT NULL,
+      `officeHours` VARCHAR(25) NOT NULL,
       `latitude` double NOT NULL,
       `longitude` double NOT NULL,
       `status` VARCHAR(1) NOT NULL,
@@ -40,9 +40,9 @@ CREATE TABLE `umbrella_rental_other` (
 
 CREATE TABLE `rainfall_report` (
       `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      `regionCode` VARCHAR(10) NOT NULL,
-      `districtCode` VARCHAR(10) NOT NULL,
-      `location` VARCHAR(10),
+      `regionCode` VARCHAR(25) NOT NULL,
+      `districtCode` VARCHAR(25) NOT NULL,
+      `location` VARCHAR(100),
       `postTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `rate` int NOT NULL,
       `latitude` double NOT NULL,
@@ -53,9 +53,9 @@ CREATE TABLE `rainfall_report` (
 
 CREATE TABLE `flooding_report` (
       `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-      `regionCode` VARCHAR(10) NOT NULL,
-      `districtCode` VARCHAR(10) NOT NULL,
-      `location` VARCHAR(10),
+      `regionCode` VARCHAR(25) NOT NULL,
+      `districtCode` VARCHAR(25) NOT NULL,
+      `location` VARCHAR(100),
       `postTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       `latitude` double NOT NULL,
       `longitude` double NOT NULL,

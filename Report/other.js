@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const dotenv = require('dotenv')
 dotenv.config()
-const table = process.env.RAINFALLREPORTTABLE
+const table = process.env.UROTHERTABLE
 const Handler = require('../Handler/CommonHandler')
 const handler = new Handler()
 const SqlHandler = require('../Handler/SqlHandler')
@@ -10,7 +10,7 @@ const sqlHandler = new SqlHandler()
 
 router.get('/', async (req, res) => {
     try {
-        const result = `Connected to Rainfall Report Table: ${table} successfully.`
+        const result = `Connected to Umbrella Rental Report Table: ${table} successfully.`
         res.send(handler.genSuccessMessage(result))
         res.end()
     } catch (error) {
@@ -19,8 +19,8 @@ router.get('/', async (req, res) => {
     }
 })
 
-// http://localhost:8080/report/rainfall/getRainfallReport/0
-router.get('/getRainfallReport/:id', async (req, res) => {
+// http://localhost:8080/report/other/getOtherReport/0
+router.get('/getOtherReport/:id', async (req, res) => {
     try {
         const sql = `SELECT * FROM ${table} WHERE id > ?`
         const sqlParam = [req.params.id]
@@ -33,8 +33,8 @@ router.get('/getRainfallReport/:id', async (req, res) => {
     }
 })
 
-// http://localhost:8080/report/rainfall/getRainfallReportCount
-router.get('/getRainfallReportCount', async (req, res) => {
+// http://localhost:8080/report/other/getOtherReportCount
+router.get('/getOtherReportCount', async (req, res) => {
     try {
         const sql = `SELECT COUNT(*) as count FROM ${table}`
         const result = await sqlHandler.goSql(sql)
@@ -46,8 +46,8 @@ router.get('/getRainfallReportCount', async (req, res) => {
     }
 })
 
-// http://localhost:8080/report/rainfall/postRainfallReport
-router.post('/postRainfallReport', async (req, res) => {
+// http://localhost:8080/report/other/postOtherReport
+router.post('/postOtherReport', async (req, res) => {
     try {
         const { sql, sqlParam } = await sqlHandler.genPostSql(table, req.body)
         const result = await sqlHandler.goSql(sql, sqlParam)
@@ -58,16 +58,5 @@ router.post('/postRainfallReport', async (req, res) => {
         res.end()
     }
 })
-
-/*
-{
-    "regionCode": "1",
-    "districtCode": "2",
-    "location": "Hopewell Centre",
-    "rate": 2,
-    "latitude": 22.2748239572291,
-    "longitude": 114.1716108327946
-}
-*/
 
 module.exports = router
