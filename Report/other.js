@@ -7,6 +7,8 @@ const Handler = require('../Handler/CommonHandler')
 const handler = new Handler()
 const SqlHandler = require('../Handler/SqlHandler')
 const sqlHandler = new SqlHandler()
+const ErrorCodeHandler = require('../Handler/ErrorCodeHandler')
+const errorCodeHandler = new ErrorCodeHandler()
 
 router.get('/', async (req, res) => {
     try {
@@ -22,6 +24,14 @@ router.get('/', async (req, res) => {
 // http://localhost:8080/report/other/getOtherReport/0
 router.get('/getOtherReport/:id', async (req, res) => {
     try {
+        const isNumber = Number.isFinite(+req.params.id)
+        if (!isNumber) {
+            const [error_code, error_message] = errorCodeHandler.data_type_error_id()
+            console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+            res.status(error_code).send(handler.genErrorMessage(error_code, error_message))
+            res.end()
+            return
+        }
         const sql = `SELECT * FROM ${table} WHERE id > ?`
         const sqlParam = [req.params.id]
         const result = await sqlHandler.goSql(sql, sqlParam)

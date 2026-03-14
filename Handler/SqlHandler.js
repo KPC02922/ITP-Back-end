@@ -27,6 +27,12 @@ module.exports = class SqlHandler extends Handler{
         try {
             console.log(`genPostSql, table: ${table}, reqBody: ${JSON.stringify(reqBody)}`)
 
+            if (reqBody == null || reqBody == undefined) {
+                const [error_code, error_message] = errorCodeHandler.empty_request_body_error()
+                console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+                throw new Error(super.genErrorMessage(error_code, error_message))
+            }
+
             const column = await this.getColumn(table, true)
             console.log(`genPostSql, column: ${column}`)
             const sql = `INSERT INTO ${table} (${column.join(',')}) VALUES (${column.map(() => '?').join(',')})`
@@ -36,7 +42,9 @@ module.exports = class SqlHandler extends Handler{
                 const targetColumn = column[i].toString()
                 if (targetColumn != "status") {
                     if (!reqBody[targetColumn]) {
-                        throw new Error(super.genErrorMessage(601, `Request body is empty | Missing column: ${targetColumn}`))
+                        const [error_code, error_message] = errorCodeHandler.missing_column_error(targetColumn)
+                        console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+                        throw new Error(super.genErrorMessage(error_code, error_message))
                     }
                     sqlParam.push(reqBody[targetColumn])
                 }
@@ -59,8 +67,11 @@ module.exports = class SqlHandler extends Handler{
         try {
             const id = req.params.id
             if (!id) {
-                throw new Error(super.genErrorMessage(601, 'Request body is empty'))
+                const [error_code, error_message] = errorCodeHandler.missing_id_error()
+                console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+                throw new Error(super.genErrorMessage(error_code, error_message))
             }
+
             console.log(`genPutSql, table: ${table}, req.body: ${JSON.stringify(req.body)}`)
             const sql = `UPDATE ${table} SET ${Object.keys(req.body).map(key => `${key} = ?`).join(', ')} WHERE id = ?`
             const sqlParam = [...Object.keys(req.body).map(key => req.body[key]), id]
