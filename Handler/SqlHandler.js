@@ -41,7 +41,7 @@ module.exports = class SqlHandler extends Handler{
             for (let i = 0; i < column.length; i++) {
                 const targetColumn = column[i].toString()
                 if (targetColumn != "status") {
-                    if (!reqBody[targetColumn]) {
+                    if (targetColumn != "location" && !reqBody[targetColumn]) {
                         const [error_code, error_message] = errorCodeHandler.missing_column_error(targetColumn)
                         console.log(`error_code: ${error_code}, error_message: ${error_message}`)
                         throw new Error(super.genErrorMessage(error_code, error_message))

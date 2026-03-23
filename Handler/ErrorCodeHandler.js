@@ -12,11 +12,11 @@ module.exports = class ErrorCodeHandler {
     }
 
     empty_request_body_error() {
-        return [700, 'Request body is empty']
+        return [610, 'Request body is empty']
     }
 
     missing_column_error(column) {
-        return [710, `Missing column: ${column}`]
+        return [620, `Missing column: ${column}`]
     }
 }
 
