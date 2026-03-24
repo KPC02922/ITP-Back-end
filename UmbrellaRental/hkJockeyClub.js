@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 // http://localhost:8080/umbrellaRental/hkJockeyClub/getLocation
 router.get('/getLocation', async (req, res) => {
     try {
-        const sql = `SELECT * FROM ${table} `
+        const sql = `SELECT * FROM ${table} WHERE status = 'N'`
         const result = await sqlHandler.goSql(sql)
         res.send(handler.genSuccessMessage(result))
         res.end()
@@ -61,8 +61,8 @@ router.post('/postLocation', async (req, res) => {
     }
 })
 
-// http://localhost:8080/umbrellaRental/hkJockeyClub/updateLocation
-router.put('/updateLocation/:id', async (req, res) => {
+// http://localhost:8080/umbrellaRental/hkJockeyClub/updateRecord/0
+router.put('/updateRecord/:id', async (req, res) => {
     try {
         const isNumber = Number.isFinite(+req.params.id)
         if (!isNumber) {

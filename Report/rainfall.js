@@ -32,7 +32,7 @@ router.get('/getRainfallReport/:id', async (req, res) => {
             res.end()
             return
         }
-        const sql = `SELECT * FROM ${table} WHERE id > ?`
+        const sql = `SELECT * FROM ${table} WHERE id > ? AND status = 'N'`
         const sqlParam = [req.params.id]
         const result = await sqlHandler.goSql(sql, sqlParam)
         res.send(handler.genSuccessMessage(result))
@@ -79,5 +79,27 @@ router.post('/postRainfallReport', async (req, res) => {
     "longitude": 114.1716108327946
 }
 */
+
+// http://localhost:8080/report/rainfall/updateRainfallReport/1
+router.put('/updateRainfallReport/:id', async (req, res) => {
+    try {
+        const isNumber = Number.isFinite(+req.params.id)
+        if (!isNumber) {
+            const [error_code, error_message] = errorCodeHandler.data_type_error_id()
+            console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+            res.status(error_code).send(handler.genErrorMessage(error_code, error_message))
+            res.end()
+            return
+        }
+        const { sql, sqlParam } = await sqlHandler.genPutSql(table, req)
+        const result = await sqlHandler.goSql(sql, sqlParam)
+        res.send(handler.genSuccessMessage(`Updated record`))
+        res.end()
+    }
+    catch (error) {
+        res.status(parseInt(JSON.parse(error).error_code)).send(error)
+        res.end()
+    }
+})
 
 module.exports = router

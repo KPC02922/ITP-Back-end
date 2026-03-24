@@ -71,6 +71,20 @@ module.exports = class SqlHandler extends Handler{
                 console.log(`error_code: ${error_code}, error_message: ${error_message}`)
                 throw new Error(super.genErrorMessage(error_code, error_message))
             }
+            
+            if (req.body == null || req.body == undefined || Object.keys(req.body).length === 0) {
+                const [error_code, error_message] = errorCodeHandler.empty_request_body_error()
+                console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+                throw new Error(super.genErrorMessage(error_code, error_message))
+            }
+
+            if (Object.keys(req.body).includes('status')) {
+                if (req.body.status !== 'N' && req.body.status !== 'C') {
+                    const [error_code, error_message] = errorCodeHandler.invalid_status_error()
+                    console.log(`error_code: ${error_code}, error_message: ${error_message}`)
+                    throw new Error(super.genErrorMessage(error_code, error_message))
+                }
+            }
 
             console.log(`genPutSql, table: ${table}, req.body: ${JSON.stringify(req.body)}`)
             const sql = `UPDATE ${table} SET ${Object.keys(req.body).map(key => `${key} = ?`).join(', ')} WHERE id = ?`
@@ -80,7 +94,7 @@ module.exports = class SqlHandler extends Handler{
             console.log(`sqlParam: ${sqlParam}`)
             return { sql, sqlParam }
         } catch (error) {
-            throw new Error(super.genErrorMessage(601, 'Request body is empty'))
+            throw error.message
         }
     }
 
@@ -94,7 +108,6 @@ module.exports = class SqlHandler extends Handler{
 
             if (filter) {
                 column = key.filter(item => item !== `id` && item !== `lastUpdateTime` && item !== `postTime` && item !== `updateTime`)
-                
             }
 
             console.log(`getColumn, table: ${table}, column: ${column}`)
